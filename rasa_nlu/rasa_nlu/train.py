@@ -110,6 +110,7 @@ def do_train(config,  # type: RasaNLUConfig
     # Ensure we are training a model that we can save in the end
     # WARN: there is still a race condition if a model with the same name is
     # trained in another subprocess
+    logger.debug("Configuration: " + config.view())
     trainer = Trainer(config, component_builder)
     persistor = create_persistor(config)
     training_data = load_data(config['data'], config['language'])

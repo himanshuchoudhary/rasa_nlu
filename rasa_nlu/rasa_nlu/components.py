@@ -298,6 +298,7 @@ class ComponentBuilder(object):
         from rasa_nlu.model import Metadata
 
         component_class = registry.get_component_class(component_name)
+        logger.debug("HIM: " + component_name + " " + str(component_class))
         cache_key = component_class.cache_key(model_metadata)
         if (cache_key is not None
                 and self.use_cache

@@ -1,0 +1,207 @@
+-> do_train (train.py)  ----> config [INDEX-1]
+	-> Trainer (rasa_nlu.model.py)
+	-> load_data (rasa_nlu.training_data.loading.py)
+	-> trainer.train (rasa_nlu.model.py)
+	-> nlp_spacy 						<class 'rasa_nlu.utils.spacy_utils.SpacyNLP'>     ----------> add 'spacy_doc' for 'text' part [INDEX-2]
+	-> tokenizer_spacy 					<class 'rasa_nlu.tokenizers.spacy_tokenizer.SpacyTokenizer'>   -----------> tokanize "spacy_doc" [INDEX-3]
+	-> intent_featurizer_spacy 			<class 'rasa_nlu.featurizers.spacy_featurizer.SpacyFeaturizer'>  -------> add "text_features" to spacy_doc, basicly find vetor and _combine_with_existing_text_features (Featurizer.__init__.py) np.hstack() eg {a = [1,2,3,4,5] b = [10,20,30,40,50] np.hstack((a,b)) = array([ 1,  2,  3,  4,  5, 10, 20, 30, 40, 50]) }
+	-> intent_entity_featurizer_regex 	<class 'rasa_nlu.featurizers.regex_featurizer.RegexFeaturizer'>  ------> np.hstack() to "text_features" similar to SpacyFeaturizer but for regex_feature for known regex [INDEX-4]
+	-> ner_crf 							<class 'rasa_nlu.extractors.crf_entity_extractor.CRFEntityExtractor'>
+	-> ner_synonyms 					<class 'rasa_nlu.extractors.entity_synonyms.EntitySynonymMapper'>
+	-> intent_classifier_sklearn 		<class 'rasa_nlu.classifiers.sklearn_intent_classifier.SklearnIntentClassifier'> ----> applies SVC (gridsearch), used text_features as input and used f1_weighted for scoring 
+
+==function call sequence========================================================
+Line 1: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU required_packages
+Line 3: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU cache_key
+Line 4: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU create
+Line 6: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU ensure_proper_language_model
+Line 7: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU __init__
+Line 23: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU provide_context
+Line 25: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU train
+Line 41: INFO:rasa_nlu.utils.spacy_utils:HIMANSHU persist
+
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU train
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize
+
+INFO:rasa_nlu.featurizers.spacy_featurizer:HIMANSHU train
+INFO:rasa_nlu.featurizers.spacy_featurizer:HIMANSHU _set_spacy_features
+INFO:rasa_nlu.featurizers.spacy_featurizer:HIMANSHU features_for_doc:hey
+
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU required_packages
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU __init__
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU train
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU _text_features_with_regex
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU features_for_patterns
+
+==INDEX-1========================================================
+DEBUG:__main__:Configuration: {
+    "project": null,
+    "fixed_model_name": null,
+    "config": "sample_configs/config_spacy_himan.json",
+    "data": "./data/examples/rasa/demo-rasa.json",
+    "emulate": null,
+    "language": "en",
+    "log_file": null,
+    "log_level": "DEBUG",
+    "mitie_file": "data\\total_word_feature_extractor.dat",
+    "spacy_model_name": null,
+    "num_threads": 1,
+    "max_training_processes": 1,
+    "path": "E:\\Workspace\\ML\\rasa_nlu-master\\./projects",
+    "port": 5000,
+    "token": null,
+    "cors_origins": [],
+    "max_number_of_ngrams": 7,
+    "pipeline": [
+        "nlp_spacy",
+        "tokenizer_spacy",
+        "intent_featurizer_spacy",
+        "intent_entity_featurizer_regex",
+        "ner_crf",
+        "ner_synonyms",
+        "intent_classifier_sklearn"
+    ],
+    "response_log": "E:\\Workspace\\ML\\rasa_nlu-master\\logs",
+    "storage": null,
+    "aws_endpoint_url": null,
+    "duckling_dimensions": null,
+    "duckling_http_url": null,
+    "ner_crf": {
+        "BILOU_flag": true,
+        "features": [
+            [
+                "low",
+                "title",
+                "upper",
+                "pos",
+                "pos2"
+            ],
+            [
+                "bias",
+                "low",
+                "word3",
+                "word2",
+                "upper",
+                "title",
+                "digit",
+                "pos",
+                "pos2",
+                "pattern"
+            ],
+            [
+                "low",
+                "title",
+                "upper",
+                "pos",
+                "pos2"
+            ]
+        ],
+        "max_iterations": 50,
+        "L1_c": 1,
+        "L2_c": 0.001
+    },
+    "intent_classifier_sklearn": {
+        "C": [
+            1,
+            2,
+            5,
+            10,
+            20,
+            100
+        ],
+        "kernel": "linear"
+    }
+}
+
+====INDEX-2===============================================================
+INFO:rasa_nlu.utils.spacy_utils:train: hey      -> hey
+INFO:rasa_nlu.utils.spacy_utils:train: howdy      -> howdy
+INFO:rasa_nlu.utils.spacy_utils:train: hey there      -> hey there
+INFO:rasa_nlu.utils.spacy_utils:train: hello      -> hello
+INFO:rasa_nlu.utils.spacy_utils:train: hi      -> hi
+INFO:rasa_nlu.utils.spacy_utils:train: good morning      -> good morning
+INFO:rasa_nlu.utils.spacy_utils:train: good evening      -> good evening
+INFO:rasa_nlu.utils.spacy_utils:train: dear sir      -> dear sir
+INFO:rasa_nlu.utils.spacy_utils:train: yes      -> yes
+INFO:rasa_nlu.utils.spacy_utils:train: yep      -> yep
+INFO:rasa_nlu.utils.spacy_utils:train: yeah      -> yeah
+INFO:rasa_nlu.utils.spacy_utils:train: indeed      -> indeed
+INFO:rasa_nlu.utils.spacy_utils:train: that's right      -> that's right
+INFO:rasa_nlu.utils.spacy_utils:train: ok      -> ok
+INFO:rasa_nlu.utils.spacy_utils:train: great      -> great
+INFO:rasa_nlu.utils.spacy_utils:train: right, thank you      -> right, thank you
+INFO:rasa_nlu.utils.spacy_utils:train: correct      -> correct
+INFO:rasa_nlu.utils.spacy_utils:train: great choice      -> great choice
+INFO:rasa_nlu.utils.spacy_utils:train: sounds really good      -> sounds really good
+INFO:rasa_nlu.utils.spacy_utils:train: i'm looking for a place to eat      -> i'm looking for a place to eat
+INFO:rasa_nlu.utils.spacy_utils:train: i want to grab lunch      -> i want to grab lunch
+INFO:rasa_nlu.utils.spacy_utils:train: i am searching for a dinner spot      -> i am searching for a dinner spot
+INFO:rasa_nlu.utils.spacy_utils:train: i'm looking for a place in the north of town      -> i'm looking for a place in the north of town
+INFO:rasa_nlu.utils.spacy_utils:train: show me chinese restaurants      -> show me chinese restaurants
+INFO:rasa_nlu.utils.spacy_utils:train: show me chines restaurants in the north      -> show me chines restaurants in the north
+INFO:rasa_nlu.utils.spacy_utils:train: show me a mexican place in the centre      -> show me a mexican place in the centre
+INFO:rasa_nlu.utils.spacy_utils:train: i am looking for an indian spot called olaolaolaolaolaola      -> i am looking for an indian spot called olaolaolaolaolaola
+INFO:rasa_nlu.utils.spacy_utils:train: search for restaurants      -> search for restaurants
+INFO:rasa_nlu.utils.spacy_utils:train: anywhere in the west      -> anywhere in the west
+INFO:rasa_nlu.utils.spacy_utils:train: anywhere near 18328      -> anywhere near 18328
+INFO:rasa_nlu.utils.spacy_utils:train: i am looking for asian fusion food      -> i am looking for asian fusion food
+INFO:rasa_nlu.utils.spacy_utils:train: i am looking a restaurant in 29432      -> i am looking a restaurant in 29432
+INFO:rasa_nlu.utils.spacy_utils:train: i am looking for mexican indian fusion      -> i am looking for mexican indian fusion
+INFO:rasa_nlu.utils.spacy_utils:train: central indian restaurant      -> central indian restaurant
+INFO:rasa_nlu.utils.spacy_utils:train: bye      -> bye
+INFO:rasa_nlu.utils.spacy_utils:train: goodbye      -> goodbye
+INFO:rasa_nlu.utils.spacy_utils:train: good bye      -> good bye
+INFO:rasa_nlu.utils.spacy_utils:train: stop      -> stop
+INFO:rasa_nlu.utils.spacy_utils:train: end      -> end
+INFO:rasa_nlu.utils.spacy_utils:train: farewell      -> farewell
+INFO:rasa_nlu.utils.spacy_utils:train: bye bye      -> bye bye
+INFO:rasa_nlu.utils.spacy_utils:train: have a good one      -> have a good one
+
+====INDEX-3==========================================================
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:hey offset:0 end:3 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:howdy offset:0 end:5 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:hey offset:0 end:3 data: ,text:there offset:4 end:9 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:hello offset:0 end:5 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:hi offset:0 end:2 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:good offset:0 end:4 data: ,text:morning offset:5 end:12 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:good offset:0 end:4 data: ,text:evening offset:5 end:12 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:dear offset:0 end:4 data: ,text:sir offset:5 end:8 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:yes offset:0 end:3 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:yep offset:0 end:3 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:yeah offset:0 end:4 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:indeed offset:0 end:6 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:that offset:0 end:4 data: ,text:'s offset:4 end:6 data: ,text:right offset:7 end:12 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:ok offset:0 end:2 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:great offset:0 end:5 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:right offset:0 end:5 data: ,text:, offset:5 end:6 data: ,text:thank offset:7 end:12 data: ,text:you offset:13 end:16 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:correct offset:0 end:7 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:great offset:0 end:5 data: ,text:choice offset:6 end:12 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:sounds offset:0 end:6 data: ,text:really offset:7 end:13 data: ,text:good offset:14 end:18 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:'m offset:1 end:3 data: ,text:looking offset:4 end:11 data: ,text:for offset:12 end:15 data: ,text:a offset:16 end:17 data: ,text:place offset:18 end:23 data: ,text:to offset:24 end:26 data: ,text:eat offset:27 end:30 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:want offset:2 end:6 data: ,text:to offset:7 end:9 data: ,text:grab offset:10 end:14 data: ,text:lunch offset:15 end:20 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:am offset:2 end:4 data: ,text:searching offset:5 end:14 data: ,text:for offset:15 end:18 data: ,text:a offset:19 end:20 data: ,text:dinner offset:21 end:27 data: ,text:spot offset:28 end:32 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:'m offset:1 end:3 data: ,text:looking offset:4 end:11 data: ,text:for offset:12 end:15 data: ,text:a offset:16 end:17 data: ,text:place offset:18 end:23 data: ,text:in offset:24 end:26 data: ,text:the offset:27 end:30 data: ,text:north offset:31 end:36 data: ,text:of offset:37 end:39 data: ,text:town offset:40 end:44 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:show offset:0 end:4 data: ,text:me offset:5 end:7 data: ,text:chinese offset:8 end:15 data: ,text:restaurants offset:16 end:27 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:show offset:0 end:4 data: ,text:me offset:5 end:7 data: ,text:chines offset:8 end:14 data: ,text:restaurants offset:15 end:26 data: ,text:in offset:27 end:29 data: ,text:the offset:30 end:33 data: ,text:north offset:34 end:39 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:show offset:0 end:4 data: ,text:me offset:5 end:7 data: ,text:a offset:8 end:9 data: ,text:mexican offset:10 end:17 data: ,text:place offset:18 end:23 data: ,text:in offset:24 end:26 data: ,text:the offset:27 end:30 data: ,text:centre offset:31 end:37 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:am offset:2 end:4 data: ,text:looking offset:5 end:12 data: ,text:for offset:13 end:16 data: ,text:an offset:17 end:19 data: ,text:indian offset:20 end:26 data: ,text:spot offset:27 end:31 data: ,text:called offset:32 end:38 data: ,text:olaolaolaolaolaola offset:39 end:57 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:search offset:0 end:6 data: ,text:for offset:7 end:10 data: ,text:restaurants offset:11 end:22 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:anywhere offset:0 end:8 data: ,text:in offset:9 end:11 data: ,text:the offset:12 end:15 data: ,text:west offset:16 end:20 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:anywhere offset:0 end:8 data: ,text:near offset:9 end:13 data: ,text:18328 offset:14 end:19 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:am offset:2 end:4 data: ,text:looking offset:5 end:12 data: ,text:for offset:13 end:16 data: ,text:asian offset:17 end:22 data: ,text:fusion offset:23 end:29 data: ,text:food offset:30 end:34 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:am offset:2 end:4 data: ,text:looking offset:5 end:12 data: ,text:a offset:13 end:14 data: ,text:restaurant offset:15 end:25 data: ,text:in offset:26 end:28 data: ,text:29432 offset:29 end:34 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:i offset:0 end:1 data: ,text:am offset:2 end:4 data: ,text:looking offset:5 end:12 data: ,text:for offset:13 end:16 data: ,text:mexican offset:17 end:24 data: ,text:indian offset:25 end:31 data: ,text:fusion offset:32 end:38 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:central offset:0 end:7 data: ,text:indian offset:8 end:14 data: ,text:restaurant offset:15 end:25 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:bye offset:0 end:3 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:goodbye offset:0 end:7 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:good offset:0 end:4 data: ,text:bye offset:5 end:8 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:stop offset:0 end:4 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:end offset:0 end:3 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:farewell offset:0 end:8 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:bye offset:0 end:3 data: ,text:bye offset:4 end:7 data:
+INFO:rasa_nlu.tokenizers.spacy_tokenizer:HIMANSHU tokenize ->text:have offset:0 end:4 data: ,text:a offset:5 end:6 data: ,text:good offset:7 end:11 data: ,text:one offset:12 end:15 data:
+
+=======INDEX-4============================================================
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU known_patterns:{name->greet}{pattern->hey[^\s]*}
+INFO:rasa_nlu.featurizers.regex_featurizer:HIMANSHU known_patterns:{name->zipcode}{pattern->[0-9]{5}}
+

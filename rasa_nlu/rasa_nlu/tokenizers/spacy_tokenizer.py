@@ -16,6 +16,9 @@ from rasa_nlu.components import Component
 from rasa_nlu.training_data import Message
 from rasa_nlu.training_data import TrainingData
 
+import logging
+logger = logging.getLogger(__name__)
+
 if typing.TYPE_CHECKING:
     from spacy.language import Language
     from spacy.tokens.doc import Doc
@@ -28,16 +31,16 @@ class SpacyTokenizer(Tokenizer, Component):
 
     def train(self, training_data, config, **kwargs):
         # type: (TrainingData, RasaNLUConfig, **Any) -> None
-
+        logger.info("HIMANSHU train")
         for example in training_data.training_examples:
             example.set("tokens", self.tokenize(example.get("spacy_doc")))
 
     def process(self, message, **kwargs):
         # type: (Message, **Any) -> None
-
+        logger.info("HIMANSHU process")
         message.set("tokens", self.tokenize(message.get("spacy_doc")))
 
     def tokenize(self, doc):
         # type: (Doc) -> List[Token]
-
+        logger.info("HIMANSHU tokenize ->" + ",".join([Token(t.text, t.idx).display() for t in doc]))
         return [Token(t.text, t.idx) for t in doc]

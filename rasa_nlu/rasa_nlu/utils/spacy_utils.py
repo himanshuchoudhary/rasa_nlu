@@ -31,19 +31,21 @@ class SpacyNLP(Component):
 
     def __init__(self, nlp, language, spacy_model_name):
         # type: (Language, Text, Text) -> None
-
+        logger.info("HIMANSHU __init__")
         self.nlp = nlp
         self.language = language
         self.spacy_model_name = spacy_model_name
 
     @classmethod
     def required_packages(cls):
+        logger.info("HIMANSHU required_packages")
         # type: () -> List[Text]
         return ["spacy"]
 
     @classmethod
     def create(cls, config):
         # type: (RasaNLUConfig) -> SpacyNLP
+        logger.info("HIMANSHU create")
         import spacy
         spacy_model_name = config["spacy_model_name"]
         if spacy_model_name is None:
@@ -57,7 +59,7 @@ class SpacyNLP(Component):
     @classmethod
     def cache_key(cls, model_metadata):
         # type: (Metadata) -> Text
-
+        logger.info("HIMANSHU cache_key")
         spacy_model_name = model_metadata.metadata.get("spacy_model_name")
         if spacy_model_name is None:
             # Fallback, use the language name, e.g. "en",
@@ -67,23 +69,25 @@ class SpacyNLP(Component):
 
     def provide_context(self):
         # type: () -> Dict[Text, Any]
-
+        logger.info("HIMANSHU provide_context")
         return {"spacy_nlp": self.nlp}
 
     def train(self, training_data, config, **kwargs):
         # type: (TrainingData, RasaNLUConfig, **Any) -> None
-
+        logger.info("HIMANSHU train\n==========================")
         for example in training_data.training_examples:
+            logger.info("train: " + example.text.lower() + "      -> " + str(self.nlp(example.text.lower())))
             example.set("spacy_doc", self.nlp(example.text.lower()))
+        logger.info("HIMANSHU train\n==========================")
 
     def process(self, message, **kwargs):
         # type: (Message, **Any) -> None
-
+        logger.info("HIMANSHU process")
         message.set("spacy_doc", self.nlp(message.text.lower()))
 
     def persist(self, model_dir):
         # type: (Text) -> Dict[Text, Any]
-
+        logger.info("HIMANSHU persist")
         return {
             "spacy_model_name": self.spacy_model_name,
             "language": self.language
@@ -97,7 +101,7 @@ class SpacyNLP(Component):
              **kwargs):
         # type: (Text, Metadata, Optional[SpacyNLP], **Any) -> SpacyNLP
         import spacy
-
+        logger.info("HIMANSHU load")
         if cached_component:
             return cached_component
 
@@ -109,7 +113,7 @@ class SpacyNLP(Component):
     def ensure_proper_language_model(nlp):
         # type: (Optional[Language]) -> None
         """Checks if the spacy language model is properly loaded. Raises an exception if the model is invalid."""
-
+        logger.info("HIMANSHU ensure_proper_language_model")
         if nlp is None:
             raise Exception("Failed to load spacy language model. Loading the model returned 'None'.")
         if nlp.path is None:

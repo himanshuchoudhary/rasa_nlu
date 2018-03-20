@@ -38,18 +38,23 @@ class RegexFeaturizer(Featurizer):
 
     def __init__(self, known_patterns=None):
         super(RegexFeaturizer, self).__init__()
-
+        logger.info("HIMANSHU __init__")
         self.known_patterns = known_patterns if known_patterns else []
 
     @classmethod
     def required_packages(cls):
         # type: () -> List[Text]
+        logger.info("HIMANSHU required_packages")
         return ["numpy"]
 
     def train(self, training_data, config, **kwargs):
         # type: (TrainingData, RasaNLUConfig, **Any) -> None
-
+        logger.info("HIMANSHU train")
         for example in training_data.regex_features:
+            s = ""
+            for i in example:
+                s = s + "{" +i +"->"+ example[i]+"}"
+            logger.info("HIMANSHU known_patterns:"+ s)
             self.known_patterns.append(example)
 
         for example in training_data.training_examples:
@@ -58,11 +63,12 @@ class RegexFeaturizer(Featurizer):
 
     def process(self, message, **kwargs):
         # type: (Message, **Any) -> None
-
+        logger.info("HIMANSHU process")
         updated = self._text_features_with_regex(message)
         message.set("text_features", updated)
 
     def _text_features_with_regex(self, message):
+        logger.info("HIMANSHU _text_features_with_regex")
         if self.known_patterns is not None:
             extras = self.features_for_patterns(message)
             return self._combine_with_existing_text_features(message, extras)
@@ -76,7 +82,7 @@ class RegexFeaturizer(Featurizer):
         regexes did match. Furthermore, if the
         message is tokenized, the function will mark the matching regex on
         the tokens that are part of the match."""
-
+        logger.info("HIMANSHU features_for_patterns")
         found = []
         for i, exp in enumerate(self.known_patterns):
             match = re.search(exp["pattern"], message.text)
@@ -97,7 +103,7 @@ class RegexFeaturizer(Featurizer):
              **kwargs  # type: **Any
              ):
         # type: (...) -> RegexFeaturizer
-
+        logger.info("HIMANSHU load")
         if model_dir and model_metadata.get("regex_featurizer"):
             regex_file = os.path.join(model_dir,
                                       model_metadata.get("regex_featurizer"))
@@ -114,7 +120,7 @@ class RegexFeaturizer(Featurizer):
         """Persist this model into the passed directory.
 
         Return the metadata necessary to load the model again."""
-
+        logger.info("HIMANSHU persist")
         if self.known_patterns:
             regex_file = os.path.join(model_dir, "regex_featurizer.json")
             utils.write_json_to_file(regex_file, self.known_patterns, indent=4)

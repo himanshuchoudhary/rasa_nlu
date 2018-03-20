@@ -11,7 +11,8 @@ from typing import Text
 from rasa_nlu.featurizers import Featurizer
 from rasa_nlu.training_data import Message
 from rasa_nlu.training_data import TrainingData
-
+import logging
+logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from spacy.language import Language
@@ -22,12 +23,14 @@ if typing.TYPE_CHECKING:
 def ndim(spacy_nlp):
     """Number of features used to represent a document / sentence."""
     # type: Language -> int
+    logger.info("HIMANSHU ndim")
     return spacy_nlp.vocab.vectors_length
 
 
 def features_for_doc(doc):
     """Feature vector for a single document / sentence."""
     # type: Doc -> np.ndarray
+    logger.info("HIMANSHU features_for_doc:" + doc.text)
     return doc.vector
 
 
@@ -40,18 +43,18 @@ class SpacyFeaturizer(Featurizer):
 
     def train(self, training_data, config, **kwargs):
         # type: (TrainingData) -> None
-
+        logger.info("HIMANSHU train")
         for example in training_data.intent_examples:
             self._set_spacy_features(example)
 
     def process(self, message, **kwargs):
         # type: (Message, **Any) -> None
-
+        logger.info("HIMANSHU process")
         self._set_spacy_features(message)
 
     def _set_spacy_features(self, message):
         """Adds the spacy word vectors to the messages text features."""
-
+        logger.info("HIMANSHU _set_spacy_features")
         fs = features_for_doc(message.get("spacy_doc"))
         features = self._combine_with_existing_text_features(message, fs)
         message.set("text_features", features)

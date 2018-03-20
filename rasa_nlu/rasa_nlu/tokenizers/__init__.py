@@ -21,3 +21,9 @@ class Token(object):
 
     def get(self, prop, default=None):
         return self.data.get(prop, default)
+
+    def display(self):
+        s = "text:"+self.text+" offset:"+str(self.offset)+" end:"+str(self.end)+" data: "
+        for p in self.data:
+            s = s + "{" + str(p) + "=" + str(self.data[p]) +"}";
+        return s
