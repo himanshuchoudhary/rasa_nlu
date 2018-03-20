@@ -5,19 +5,28 @@ https://rasahq.github.io/rasa_nlu/tutorial.html
 | INSTALL RASA_NUL |
  ------------------
 git clone https://github.com/himanshuchoudhary/rasa_nlu.git
+
 cd rasa_nlu/rasa_nlu
+
 pip install -r requirements.txt
+
 pip install -e .
 
+
 pip install rasa_nlu[spacy]
+
 python -m spacy download en_core_web_md
+
 #Do it with Admin permission
+
 python -m spacy link en_core_web_md en
+
 
  -------
 | TRAIN |
  -------
 Online tool for Visualizing https://rasahq.github.io/rasa-nlu-trainer/
+
 python -m rasa_nlu.train -c sample_configs/config_spacy_himan.json
 
 
