@@ -25,8 +25,10 @@ python -m rasa_nlu.train -c sample_configs/config_spacy_himan.json
 | RUN |
  -----
 python -m rasa_nlu.server -c sample_configs/config_spacy_himan.json
+
 #Windows
 curl -X POST "localhost:5000/parse" -d "{\"q\":\"I say american bye \" }" | python -m json.tool
+
 #Linux
 curl -X POST localhost:5000/parse -d '{"q":"I am looking for Mexican food"}' | python -m json.tool
 
